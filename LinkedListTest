@@ -110,6 +110,10 @@ public class LinkedListTest extends TestCase {
 
         assertEquals("w", list.get(4));
         assertEquals(7, list.getSize());
+        
+        list.add(5, "m");
+        assertEquals("m", list.get(5));
+        assertEquals(8, list.getSize());
 
         Exception thrown = null;
         try {
@@ -129,6 +133,7 @@ public class LinkedListTest extends TestCase {
      */
     public void testRemoveA() {
         assertFalse(list.remove("a"));
+        
 
         list.add("a");
         assertTrue(list.remove("a"));
@@ -148,6 +153,8 @@ public class LinkedListTest extends TestCase {
         assertEquals("a", list.get(0));
         assertEquals("c", list.get(1));
         assertEquals(2, list.getSize());
+        
+        assertFalse(list.remove("z"));
     }
 
 
@@ -168,6 +175,9 @@ public class LinkedListTest extends TestCase {
         list.add("a");
         list.add("b");
         list.add("c");
+        list.add("d");
+        assertEquals("d", list.remove(3));
+        assertEquals(3, list.getSize());
 
         try {
             list.remove(10);
@@ -322,6 +332,7 @@ public class LinkedListTest extends TestCase {
      */
     public void testIterator() {
         Iterator<String> iter = list.iterator();
+        assertFalse(iter.hasNext());
 
         list.add("a");
         list.add("b");
@@ -343,5 +354,7 @@ public class LinkedListTest extends TestCase {
             thrown = e;
         }
         assertTrue(thrown instanceof NoSuchElementException);
+
     }
+
 }
