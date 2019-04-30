@@ -2,7 +2,6 @@ package prj5;
 
 import java.util.Iterator;
 import java.util.NoSuchElementException;
-import student.TestCase;
 
 // Virginia Tech Honor Code Pledge:
 //
@@ -12,336 +11,469 @@ import student.TestCase;
 // -- Anthony Derfler (cderfler)
 
 /**
- * Test Class for Linked List
+ * This is a doubly linked list with a private Node class inside
  * 
  * @author Anthony Derfler (cderfler)
- * @version 19.4.11
+ * @version 19.4.15
  */
-public class LinkedListTest extends TestCase {
+public class LinkedList<E> {
 
-    // test list
-    private LinkedList<String> list;
+    /**
+     * private Doubly Linked Node class that contains references to both the
+     * previous and next node
+     * 
+     * @author Anthony Derfler (cderfler)
+     *
+     * @param <E>
+     *            general object
+     */
+    private class DoublyLinkedNode<E> {
+        // next node in the list
+        private DoublyLinkedNode<E> nextNode;
+
+        // previous node in the list
+        private DoublyLinkedNode<E> prevNode;
+
+        // data contained in the node
+        private E data;
+
+
+        /**
+         * standard constructor with modifiable next, previous, and data
+         * parameters
+         * 
+         * @param next
+         *            next node
+         * @param prev
+         *            previous node
+         * @param data
+         *            data held in node
+         */
+        public DoublyLinkedNode(
+            DoublyLinkedNode<E> next,
+            DoublyLinkedNode<E> prev,
+            E data) {
+            this.nextNode = next;
+            this.data = data;
+        }
+
+
+        /**
+         * constructor with only data held inside
+         * 
+         * @param data
+         *            data held in node
+         */
+        public DoublyLinkedNode(E data) {
+            this(null, null, data);
+        }
+
+
+        /**
+         * sets the next node in the list
+         * 
+         * @param next
+         *            the next node
+         */
+        public void setNext(DoublyLinkedNode<E> next) {
+            this.nextNode = next;
+        }
+
+
+        /**
+         * sets the previous node in the list
+         * 
+         * @param prev
+         *            the previous node
+         */
+        public void setPrevious(DoublyLinkedNode<E> prev) {
+            this.prevNode = prev;
+        }
+
+
+        /**
+         * getter method that retrieves the next node
+         * 
+         * @return the next node
+         */
+        public DoublyLinkedNode<E> getNext() {
+            return nextNode;
+        }
+
+
+        /**
+         * getter method that retrieves the previous node
+         * 
+         * @return the previous node
+         */
+        public DoublyLinkedNode<E> getPrevious() {
+            return prevNode;
+        }
+
+
+        /**
+         * getter method that retrieves the data
+         * 
+         * @return the data held in node
+         */
+        public E getData() {
+            return data;
+        }
+
+
+        /**
+         * links the node with the node you want after it
+         * 
+         * @param linkNode
+         *            the node being linked to
+         */
+        public void linkWith(DoublyLinkedNode<E> linkNode) {
+            this.setNext(linkNode);
+            nextNode.setPrevious(this);
+        }
+
+
+        /**
+         * adds a node after another node
+         * 
+         * @param node
+         *            the node this is being added after
+         */
+        public void addAfter(DoublyLinkedNode<E> node) {
+            this.linkWith(node.getNext());
+            node.linkWith(this);
+        }
+    }
+
+    // size of the list
+    private int size;
+
+    // first sentinel node
+    private DoublyLinkedNode<E> head;
+
+    // last sentinel node
+    private DoublyLinkedNode<E> tail;
 
 
     /**
-     * sets up the test list for each test
+     * standard constructor that sets everything to null
      */
-    public void setUp() {
-        list = new LinkedList<String>();
+    public LinkedList() {
+        size = 0;
+        head = new DoublyLinkedNode<E>(null);
+        tail = new DoublyLinkedNode<E>(null);
+
+        head.setNext(tail);
+        tail.setPrevious(head);
     }
 
 
     /**
-     * makes sure it gets the correct size
+     * getter method that returns the size of the list
+     * 
+     * @return the size
      */
-    public void testGetSize() {
-        assertEquals(0, list.getSize());
-
-        list.add("a");
-        list.add("b");
-        assertEquals(2, list.getSize());
-
-        list.remove("a");
-        assertEquals(1, list.getSize());
+    public int getSize() {
+        return size;
     }
 
 
     /**
-     * makes sure it can add a new node to the end of a list while incrementing
-     * its size correctly
+     * adds a new node to the end of the list
+     * 
+     * @param data
+     *            the data being held by the new node
      */
-    public void testAddA() {
-        Exception thrown = null;
-        try {
-            list.add(null);
+    public void add(E data) {
+        DoublyLinkedNode<E> newNode = new DoublyLinkedNode<E>(data);
+        if (data == null) {
+            throw new NullPointerException();
         }
-        catch (Exception e) {
-            thrown = e;
+        else {
+            newNode.addAfter(tail.getPrevious());
+            size++;
         }
-        assertTrue(thrown instanceof NullPointerException);
-
-        list.add("a");
-        assertEquals("a", list.getFront());
-        assertEquals(1, list.getSize());
-
-        list.add("b");
-        assertEquals("a", list.getFront());
-        assertEquals(2, list.getSize());
-        assertEquals("b", list.get(1));
-
-        list.add("c");
-        assertEquals("a", list.getFront());
-        assertEquals(3, list.getSize());
-        assertEquals("c", list.get(2));
-
-        list.add("d");
-        assertEquals("a", list.getFront());
-        assertEquals(4, list.getSize());
-        assertEquals("d", list.get(3));
-
     }
 
 
     /**
-     * makes sure it can add a node anywhere in the list at the correct spot,
-     * connects to its adjacent nodes, and increments its size
+     * adds a new node to a specific index
+     * 
+     * @param index
+     *            index being added to
+     * @param data
+     *            data held by the node
      */
-    public void testAddB() {
-        list.add(0, "z");
-        assertEquals("z", list.getFront());
-        assertEquals("z", list.get(0));
-        assertEquals(1, list.getSize());
-
-        list.add("a");
-        list.add("b");
-        list.add("c");
-
-        list.add(0, "y");
-        assertEquals("y", list.getFront());
-        assertEquals("y", list.get(0));
-        assertEquals(5, list.getSize());
-
-        list.add(5, "x");
-
-        assertEquals("x", list.get(5));
-        assertEquals(6, list.getSize());
-
-        list.add(4, "w");
-
-        assertEquals("w", list.get(4));
-        assertEquals(7, list.getSize());
-
-        Exception thrown = null;
-        try {
-            list.add(12, "m");
+    public void add(int index, E data) {
+        if (index == 0) {
+            DoublyLinkedNode<E> newNode = new DoublyLinkedNode<E>(data);
+            newNode.addAfter(head);
+            size++;
         }
-        catch (Exception e) {
-            thrown = e;
+        else if (index == size) {
+            DoublyLinkedNode<E> newNode = new DoublyLinkedNode<E>(data);
+            newNode.addAfter(tail.getPrevious());
+            size++;
         }
-        assertTrue(thrown instanceof IndexOutOfBoundsException);
-
+        else if (index > 0 && index < size) {
+            DoublyLinkedNode<E> newNode = new DoublyLinkedNode<E>(data);
+            newNode.addAfter(this.getNodeAt(index).getPrevious());
+            size++;
+        }
+        else {
+            throw new IndexOutOfBoundsException();
+        }
     }
 
 
     /**
-     * checks that it can remove a specified object and return if it was
-     * successful
+     * removes the node holding the specified data
+     * 
+     * @param data
+     *            the data this is removing
+     * @return if its was successful or not
      */
-    public void testRemoveA() {
-        assertFalse(list.remove("a"));
+    public boolean remove(E data) {
+        DoublyLinkedNode<E> iter = head.getNext();
 
-        list.add("a");
-        assertTrue(list.remove("a"));
-        assertEquals(0, list.getSize());
+        if (this.isEmpty()) {
+            return false;
+        }
 
-        list.add("a");
-        list.add("b");
-        list.add("c");
+        if (head.getNext().getData().equals(data)) {
+            head.linkWith(head.getNext().getNext());
+            size--;
+            return true;
+        }
 
-        assertTrue(list.remove("b"));
+        for (int i = 0; i < size; i++) {
+            if (iter.getData().equals(data)) {
+                this.getNodeAt(i - 1).linkWith(this.getNodeAt(i + 1));
+                size--;
+                return true;
+            }
+            iter = iter.getNext();
+        }
 
-        assertEquals("a", list.get(0));
-        assertEquals("c", list.get(1));
-
-        list.add("d");
-        assertTrue(list.remove("d"));
-        assertEquals("a", list.get(0));
-        assertEquals("c", list.get(1));
-        assertEquals(2, list.getSize());
+        return false;
     }
 
 
     /**
-     * makes sure it can remove an item at a specified index, throwing an
-     * exception if the index is out of bounds
+     * removes a specified index from the list
+     * 
+     * @param index
+     *            index being targetted
+     * @return the contents of the removed node
      */
-    public void testRemoveB() {
-        Exception thrown = null;
-        try {
-            list.remove(0);
-        }
-        catch (Exception e) {
-            thrown = e;
-        }
-        assertTrue(thrown instanceof IndexOutOfBoundsException);
+    public E remove(int index) {
+        DoublyLinkedNode<E> iter = head.getNext();
 
-        list.add("a");
-        list.add("b");
-        list.add("c");
-
-        try {
-            list.remove(10);
+        if (index == 0 && !this.isEmpty()) {
+            E removed = head.getNext().getData();
+            head.linkWith(head.getNext().getNext());
+            size--;
+            return removed;
         }
-        catch (Exception e) {
-            thrown = e;
+        else if (index == size && !this.isEmpty()) {
+            E removed = tail.getPrevious().getData();
+            tail.getPrevious().getPrevious().linkWith(tail);
+            size--;
+            return removed;
         }
-        assertTrue(thrown instanceof IndexOutOfBoundsException);
+        else if (index > 0 && index < size) {
+            for (int i = 0; i < index; i++) {
+                iter = iter.getNext();
+            }
 
-        assertEquals("b", list.remove(1));
-        assertEquals(2, list.getSize());
-        assertEquals("a", list.remove(0));
-        assertEquals("c", list.remove(0));
-        assertTrue(list.isEmpty());
+            E removed = iter.getData();
+            iter.getPrevious().linkWith(iter.getNext());
+            size--;
+            return removed;
+        }
+        else {
+            throw new IndexOutOfBoundsException();
+        }
 
     }
 
 
     /**
-     * makes sure it returns the correct front of the list
+     * returns the front of the list
+     * 
+     * @return the contents first node
      */
-    public void testGetFront() {
-        assertNull(list.getFront());
-
-        list.add("a");
-        list.add("b");
-        assertEquals("a", list.getFront());
+    public E getFront() {
+        return head.nextNode.data;
     }
 
 
     /**
-     * makes sure it can get an item at a specified index
+     * a helper method that gets the node at a specified index
+     * 
+     * @param index
+     *            the index being targeted
+     * @return the contents of the chosen node
      */
-    public void testGet() {
-        Exception thrown = null;
-        try {
-            list.get(0);
-        }
-        catch (Exception e) {
-            thrown = e;
-        }
-        assertTrue(thrown instanceof IndexOutOfBoundsException);
+    private DoublyLinkedNode<E> getNodeAt(int index) {
+        if (index >= 0 && index <= size && !this.isEmpty()) {
+            DoublyLinkedNode<E> iter = head.getNext();
+            for (int i = 0; i < index; i++) {
+                iter = iter.getNext();
+            }
 
-        list.add("a");
-        list.add("b");
-        list.add("c");
-
-        try {
-            list.get(5);
+            return iter;
         }
-        catch (Exception e) {
-            thrown = e;
+        else {
+            throw new IndexOutOfBoundsException();
         }
-        assertTrue(thrown instanceof IndexOutOfBoundsException);
-
-        assertEquals("a", list.get(0));
-        assertEquals("b", list.get(1));
-        assertEquals("c", list.get(2));
-
     }
 
 
     /**
-     * makes sure it knows if it's empty or not
+     * gets the data of a node at a specified index
+     * 
+     * @param index
+     *            the index being looked at
+     * @return the contents of the node
      */
-    public void testIsEmpty() {
-        assertTrue(list.isEmpty());
-        list.add("a");
-        assertFalse(list.isEmpty());
+    public E get(int index) {
+        return this.getNodeAt(index).getData();
     }
 
 
     /**
-     * makes sure it knows if it contains a specified object
+     * sees if the list is empty or not
+     * 
+     * @return if it's empty
      */
-    public void testContains() {
-        Exception thrown = null;
-        try {
-            list.contains(null);
-        }
-        catch (Exception e) {
-            thrown = e;
-        }
-        assertTrue(thrown instanceof NullPointerException);
-
-        list.add("a");
-        list.add("b");
-        list.add("c");
-        list.add("d");
-
-        assertTrue(list.contains("a"));
-        assertTrue(list.contains("b"));
-        assertTrue(list.contains("c"));
-        assertTrue(list.contains("d"));
-        assertFalse(list.contains("e"));
+    public boolean isEmpty() {
+        return size == 0;
     }
 
 
     /**
-     * makes sure it clears the list correctly
+     * checks if the list contains a certain item
+     * 
+     * @param item
+     *            the item being looked for
+     * @return if it's in the list
      */
-    public void testClear() {
-        list.add("a");
-        list.add("b");
-
-        list.clear();
-        assertTrue(list.isEmpty());
+    public boolean contains(E item) {
+        if (item == null) {
+            throw new NullPointerException();
+        }
+        else {
+            DoublyLinkedNode<E> iter = head.getNext();
+            while (iter.getNext() != null) {
+                if (iter.getData().equals(item)) {
+                    return true;
+                }
+                iter = iter.getNext();
+            }
+            return false;
+        }
     }
 
 
     /**
-     * makes sure it can be converted to a string
+     * resets the list back to holding nothing
      */
-    public void testToString() {
-        assertEquals("", list.toString());
-        list.add("a");
-        list.add("b");
-        list.add("c");
-        list.add("d");
-
-        assertEquals("a, b, c, d", list.toString());
+    public void clear() {
+        size = 0;
+        head = new DoublyLinkedNode<E>(null);
+        tail = new DoublyLinkedNode<E>(null);
+        head.linkWith(tail);
     }
 
 
     /**
-     * makes sure it can retrieve the index where a specified object is
+     * converts the contents of the list to a string
      */
-    public void testGetIndex() {
-        Exception thrown = null;
-        try {
-            list.getIndex(null);
+    public String toString() {
+        StringBuilder string = new StringBuilder();
+        Iterator<E> i = iterator();
+        if (!this.isEmpty()) {
+            while (i.hasNext()) {
+                string.append(i.next());
+                if (i.hasNext()) {
+                    string.append(", ");
+                }
+            }
         }
-        catch (Exception e) {
-            thrown = e;
-        }
-        assertTrue(thrown instanceof NullPointerException);
-
-        list.add("a");
-        list.add("b");
-        list.add("c");
-        list.add("d");
-        assertEquals(0, list.getIndex("a"));
-        assertEquals(1, list.getIndex("b"));
-        assertEquals(2, list.getIndex("c"));
-        assertEquals(3, list.getIndex("d"));
-        assertEquals(-1, list.getIndex("e"));
+        return string.toString();
     }
 
 
     /**
-     * tests the iterator
+     * getter method that sees where an item exists in a node
+     * 
+     * @param item
+     *            the item being looked for
+     * @return the index where it exists in the list
      */
-    public void testIterator() {
-        Iterator<String> iter = list.iterator();
-
-        list.add("a");
-        list.add("b");
-        list.add("c");
-        list.add("d");
-
-        assertTrue(iter.hasNext());
-        assertEquals("a", iter.next());
-        assertEquals("b", iter.next());
-        assertEquals("c", iter.next());
-        assertEquals("d", iter.next());
-        assertFalse(iter.hasNext());
-
-        Exception thrown = null;
-        try {
-            iter.next();
+    public int getIndex(E item) {
+        if (this.contains(item)) {
+            DoublyLinkedNode<E> iter = head.getNext();
+            for (int i = 0; i < size; i++) {
+                if (iter.getData().equals(item)) {
+                    return i;
+                }
+                iter = iter.getNext();
+            }
         }
-        catch (Exception e) {
-            thrown = e;
-        }
-        assertTrue(thrown instanceof NoSuchElementException);
+        return -1;
     }
+
+
+    public Iterator<E> iterator() {
+        return new ListIterator();
+    }
+
+
+    /**
+     * Iterator for the list
+     * 
+     * @author Anthony
+     * @version 19.4.15
+     */
+    private class ListIterator implements Iterator<E> {
+        // iterating node
+        private DoublyLinkedNode<E> curr;
+
+
+        /**
+         * standard constructor
+         */
+        public ListIterator() {
+            curr = head;
+        }
+
+
+        /**
+         * checks if the iterator node has node after it
+         */
+        @Override
+        public boolean hasNext() {
+
+            return curr.nextNode != null && curr.nextNode != tail;
+        }
+
+
+        /**
+         * moves the node forward once
+         */
+        @Override
+        public E next() {
+            if (this.hasNext()) {
+                curr = curr.nextNode;
+                return curr.getData();
+            }
+            else {
+                throw new NoSuchElementException();
+            }
+        }
+
+    }
+
 }
