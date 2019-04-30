@@ -122,10 +122,10 @@ public class Student {
                 s.append("Southeast,");
                 break;
             case OTHER_US:
-                s.append("United States (other than Southeast or Northwest),");
+                s.append("United States (other than Southeast or Northeast),");
                 break;
             case OUTSIDE_US:
-                s.append("Outside of United States");
+                s.append("Outside of United States,");
                 break;
             default:
                 s.append("Other,");
