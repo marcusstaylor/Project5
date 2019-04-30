@@ -142,7 +142,7 @@ public class Student {
                 s.append("music,");
                 break;
             case SPORTS:
-                s.append("sports");
+                s.append("sports,");
                 break;
             default:
                 s.append("Other,");
