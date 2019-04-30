@@ -20,6 +20,7 @@ public class StudentTest extends TestCase {
     private String date;
     private Student student;
 
+
     /**
      * Creates a student to be tested on.
      */
@@ -30,21 +31,24 @@ public class StudentTest extends TestCase {
         student = new Student(190, date, Major.MATH, Hobby.MUSIC,
             Region.SOUTHEAST, responses);
     }
-    
+
+
     /**
      * Tests the getNum() method from the Student class.
      */
     public void testGetID() {
-        assertEquals(190, student.getNum());
+        assertEquals(190, student.getID());
     }
-    
+
+
     /**
      * Tests the getDate() method from the Student class.
      */
     public void testGetDate() {
         assertEquals(date, student.getDate());
     }
-    
+
+
     /**
      * Tests the getMajor() method from the Student class.
      */
@@ -52,20 +56,23 @@ public class StudentTest extends TestCase {
         assertEquals(Major.MATH, student.getMajor());
     }
 
+
     /**
      * Tests the getHobby() method from the Student class.
      */
     public void testGetHobby() {
         assertEquals(Hobby.MUSIC, student.getHobby());
     }
-    
+
+
     /**
      * Tests the getRegion() method from the Student class.
      */
     public void testGetRegion() {
         assertEquals(Region.SOUTHEAST, student.getRegion());
     }
-    
+
+
     /**
      * Tests the getResponses() method from the Student class.
      * 
@@ -78,10 +85,69 @@ public class StudentTest extends TestCase {
         assertEquals(responses, student.getResponses());
     }
 
+
     /**
      * Tests the toString() method from the Student class.
      */
     public void testToString() {
-        assertEquals("190,10/19/15 14:45,Math or CMDA,Southeast,music,No,No,Yes,Yes,Yes,Yes" + "\n", student.toString());
+        assertEquals(
+            "190,10/19/15 14:45,Math or CMDA,Southeast,music,No,No,Yes,Yes,Yes,Yes"
+                + "\n", student.toString());
+
+        student = new Student(190, date, Major.CS, Hobby.MUSIC,
+            Region.SOUTHEAST, responses);
+
+        assertEquals(
+            "190,10/19/15 14:45,Computer Science,Southeast,music,No,No,Yes,Yes,Yes,Yes"
+                + "\n", student.toString());
+
+        student = new Student(190, date, Major.ENGINEERING, Hobby.MUSIC,
+            Region.SOUTHEAST, responses);
+
+        assertEquals(
+            "190,10/19/15 14:45,Other Engineering,Southeast,music,No,No,Yes,Yes,Yes,Yes"
+                + "\n", student.toString());
+
+        student = new Student(190, date, Major.CS, Hobby.MUSIC,
+            Region.NORTHEAST, responses);
+
+        assertEquals(
+            "190,10/19/15 14:45,Computer Science,Northeast,music,No,No,Yes,Yes,Yes,Yes"
+                + "\n", student.toString());
+
+        student = new Student(190, date, Major.CS, Hobby.MUSIC,
+            Region.OTHER_US, responses);
+
+        assertEquals(
+            "190,10/19/15 14:45,Computer Science,United States (other than Southeast or Northeast),music,No,No,Yes,Yes,Yes,Yes"
+                + "\n", student.toString());
+
+        student = new Student(190, date, Major.CS, Hobby.MUSIC,
+            Region.OUTSIDE_US, responses);
+
+        assertEquals(
+            "190,10/19/15 14:45,Computer Science,Outside of United States,music,No,No,Yes,Yes,Yes,Yes"
+                + "\n", student.toString());
+        
+        student = new Student(190, date, Major.CS, Hobby.READING,
+            Region.SOUTHEAST, responses);
+
+        assertEquals(
+            "190,10/19/15 14:45,Computer Science,Southeast,reading,No,No,Yes,Yes,Yes,Yes"
+                + "\n", student.toString());
+        
+        student = new Student(190, date, Major.CS, Hobby.ART,
+            Region.SOUTHEAST, responses);
+
+        assertEquals(
+            "190,10/19/15 14:45,Computer Science,Southeast,art,No,No,Yes,Yes,Yes,Yes"
+                + "\n", student.toString());
+        
+        student = new Student(190, date, Major.CS, Hobby.SPORTS,
+            Region.SOUTHEAST, responses);
+
+        assertEquals(
+            "190,10/19/15 14:45,Computer Science,Southeast,sports,No,No,Yes,Yes,Yes,Yes"
+                + "\n", student.toString());
     }
 }
